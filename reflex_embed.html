@@ -25,15 +25,37 @@
   --text-tertiary: rgba(232,237,239,0.35);
 
   font-family: 'DM Sans', -apple-system, sans-serif;
-  background: #0A0A0C;
+  background: #050e0f;
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-x: hidden;
+  width: 100%;
 }
 
 #rfx-showcase * { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── Mobile responsive ── */
+@media (max-width: 440px) {
+  #rfx-showcase .showcase-header {
+    padding: 24px 16px 12px;
+    font-size: 11px;
+  }
+  #rfx-showcase .nav-tabs {
+    padding: 6px 12px;
+    gap: 4px;
+  }
+  #rfx-showcase .nav-tab {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  #rfx-showcase .autoplay-btn {
+    font-size: 12px;
+    padding: 6px 16px;
+    margin-bottom: 16px;
+  }
+}
 
 
 /* ── Header ── */
@@ -102,7 +124,11 @@
 #rfx-showcase .autoplay-btn.playing { border-color: var(--cyan); color: var(--cyan); }
 
 /* ── Phone Frame ── */
-#rfx-showcase .phone-container { padding: 0 20px 60px; }
+#rfx-showcase .phone-container {
+  padding: 0 20px 60px;
+  display: flex;
+  justify-content: center;
+}
 #rfx-showcase .phone-frame {
   width: 375px;
   height: 812px;
@@ -114,6 +140,8 @@
     0 0 0 2px rgba(255,255,255,0.08),
     0 0 0 8px rgba(0,0,0,0.5),
     0 30px 80px rgba(0,0,0,0.6);
+  flex-shrink: 0;
+  transform-origin: top center;
 }
 
 /* Dynamic Island */
@@ -1083,4 +1111,31 @@ setInterval(() => {
     dots.forEach(d => { d.setAttribute('cx', lastX); d.setAttribute('cy', lastY); });
   }
 }, 3000);
+
+// ── Mobile scaling: shrink phone frame to fit viewport ──
+function scalePhone() {
+  const container = document.querySelector('#rfx-showcase .phone-container');
+  const frame = document.querySelector('#rfx-showcase .phone-frame');
+  if (!container || !frame) return;
+
+  const showcase = document.getElementById('rfx-showcase');
+  const availWidth = showcase.clientWidth - 40; // 20px padding each side
+  const phoneW = 375;
+  const phoneH = 812;
+
+  if (availWidth < phoneW) {
+    const scale = availWidth / phoneW;
+    frame.style.transform = `scale(${scale})`;
+    // Collapse the dead space left by CSS transform (which doesn't affect layout)
+    container.style.height = `${Math.round(phoneH * scale) + 60}px`;
+    container.style.alignItems = 'flex-start';
+  } else {
+    frame.style.transform = '';
+    container.style.height = '';
+    container.style.alignItems = '';
+  }
+}
+
+scalePhone();
+window.addEventListener('resize', scalePhone);
 </script>
