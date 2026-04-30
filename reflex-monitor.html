@@ -353,12 +353,22 @@ html, body {
   if (!root) return;
 
   // ═══ Fit phone frame to iframe size ═══
-  // Scales the 375×812 phone container to fit inside the iframe
-  // viewport while preserving aspect ratio. Re-runs on resize.
-  // For "cover" behavior (fill iframe, may clip phone edges) —
-  // change Math.min to Math.max in the line below.
+  // Scales the 375×812 phone container to fit inside the iframe while
+  // preserving aspect ratio AND reserving space for the box-shadow
+  // extent so the soft drop shadow and outer ring don't clip.
+  //
+  // Margins are derived from the phone-frame box-shadow stack:
+  //   ring layers: 8px solid (each side)
+  //   drop shadow: blur 80px, offset_y 30px (asymmetric — shifts down)
+  //
+  // To shrink margins (= bigger phone) reduce the shadow in CSS first,
+  // then drop these numbers proportionally. For a true "cover" fit
+  // (clip to fill), swap Math.min for Math.max in the scale line.
   const PHONE_W = 375;
   const PHONE_H = 812;
+  const MARGIN_X = 90;       // ring (8) + blur (80) + breathing (~2)
+  const MARGIN_TOP = 60;     // ring + blur - offset_y
+  const MARGIN_BOTTOM = 120; // ring + blur + offset_y
   const wrap = root.querySelector('.rfx-phone-container');
 
   function fitFrame() {
@@ -366,7 +376,18 @@ html, body {
     const cw = root.clientWidth;
     const ch = root.clientHeight;
     if (!cw || !ch) return;
-    const scale = Math.min(cw / PHONE_W, ch / PHONE_H);
+
+    const availW = Math.max(0, cw - MARGIN_X * 2);
+    const availH = Math.max(0, ch - MARGIN_TOP - MARGIN_BOTTOM);
+    const scale = Math.max(0, Math.min(availW / PHONE_W, availH / PHONE_H));
+
+    // Centre horizontally; bias vertically upward so the longer
+    // bottom shadow has room to render without clipping.
+    const centerX = cw / 2;
+    const centerY = MARGIN_TOP + availH / 2;
+
+    wrap.style.left = centerX + 'px';
+    wrap.style.top = centerY + 'px';
     wrap.style.transform = `translate(-50%, -50%) scale(${scale})`;
   }
 
