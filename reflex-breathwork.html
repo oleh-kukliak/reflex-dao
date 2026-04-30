@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflex — Breathwork Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════
+     REFLEX HEALTH — BREATHWORK SCREEN (standalone embed)
+     Copy from <style> through </script> into a Webflow Embed block.
+     ═══════════════════════════════════════════════════════ -->
+
+<style>
+/* Fill the entire iframe / host area.
+   Background is dark to match phone frame; change to `transparent`
+   if you want the Webflow section background to show through. */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: #050e0f;
+  overflow: hidden;
+}
+
+/* All styles scoped to #rfx-brw. CSS variables live on the
+   container, not :root, so nothing leaks into the host page. */
+#rfx-brw {
+  --dark: #050E0F;
+  --card: #0C1517;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-medium: rgba(255,255,255,0.10);
+  --cyan: #07C7DF;
+  --green: #34D399;
+  --text-primary: #E8EDEF;
+  --text-secondary: rgba(232,237,239,0.55);
+  --text-tertiary: rgba(232,237,239,0.35);
+
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: var(--text-primary);
+  background: #050e0f;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Scoped reset — only elements inside the container */
+#rfx-brw *,
+#rfx-brw *::before,
+#rfx-brw *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Phone Frame ──
+   Container is absolute-centered at 50/50; JS applies a uniform
+   scale via transform so the phone fits inside the iframe at any
+   size while preserving the 375×812 aspect ratio. */
+#rfx-brw .rfx-phone-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 375px;
+  height: 812px;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  will-change: transform;
+}
+#rfx-brw .rfx-phone-frame {
+  width: 375px;
+  height: 812px;
+  border-radius: 50px;
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.08),
+    0 0 0 8px rgba(0,0,0,0.5),
+    0 30px 80px rgba(0,0,0,0.6);
+}
+
+/* Dynamic Island */
+#rfx-brw .rfx-phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 126px;
+  height: 35px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 100;
+}
+
+/* ── Screen ── */
+#rfx-brw .rfx-screen {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 54px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+#rfx-brw .rfx-screen::-webkit-scrollbar { display: none; }
+
+/* ── Tab Bar (decorative — non-interactive) ── */
+#rfx-brw .rfx-tab-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 82px;
+  display: flex;
+  background: rgba(12,21,23,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-subtle);
+  z-index: 50;
+  padding-bottom: 22px;
+  pointer-events: none;
+}
+#rfx-brw .rfx-tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-tertiary);
+}
+#rfx-brw .rfx-tab-item.rfx-active { color: var(--cyan); }
+#rfx-brw .rfx-tab-item svg { width: 22px; height: 22px; }
+#rfx-brw .rfx-tab-item span { font-size: 10px; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div id="rfx-brw">
+  <div class="rfx-phone-container">
+    <div class="rfx-phone-frame">
+
+      <!-- ═══ BREATHWORK SCREEN ═══ -->
+      <div class="rfx-screen">
+        <div style="display:flex; flex-direction:column; height:100%; padding-bottom:82px;">
+
+          <div style="flex:1;"></div>
+
+          <!-- Breathing Circle -->
+          <div style="display:flex; align-items:center; justify-content:center; padding-bottom:100px;">
+            <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+              <!-- Glow layer -->
+              <div id="rfx-brw-glow" style="position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(7,199,223,0.13); filter:blur(30px); transition:opacity 5s cubic-bezier(0.25,0.1,0.75,0.9);"></div>
+              <!-- Animated circle -->
+              <div id="rfx-brw-circle" style="width:200px; height:200px; border-radius:50%; border:3px solid rgba(7,199,223,0.4); background:radial-gradient(circle, rgba(7,199,223,0.20) 0%, rgba(7,199,223,0.03) 100%); display:flex; align-items:center; justify-content:center; transition:transform 5s cubic-bezier(0.25,0.1,0.75,0.9), opacity 5s cubic-bezier(0.25,0.1,0.75,0.9); transform:scale(1); opacity:1;">
+                <div id="rfx-brw-phase" style="font-size:20px; font-weight:600; color:white;">Breathe In</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats row -->
+          <div style="display:flex; justify-content:center; gap:40px; padding:0 20px;">
+            <div style="text-align:center;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Time Left</div>
+              <span id="rfx-brw-timer" style="font-size:24px; font-weight:700; color:white; font-family:ui-monospace,SFMono-Regular,monospace;">4:12</span>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Pace</div>
+              <div style="display:flex; align-items:baseline; justify-content:center; gap:3px;">
+                <span style="font-size:24px; font-weight:700; color:white;">6.0</span>
+                <span style="font-size:12px; color:rgba(255,255,255,0.5);">br/m</span>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Heart Rate</div>
+              <div style="display:flex; align-items:baseline; justify-content:center; gap:3px;">
+                <span id="rfx-brw-hr" style="font-size:24px; font-weight:700; color:white;">72</span>
+                <span style="font-size:12px; color:rgba(255,255,255,0.5);">bpm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Breathing line -->
+          <div style="padding:32px 20px 0;">
+            <div style="position:relative; height:3px;">
+              <div id="rfx-brw-line-glow" style="position:absolute; top:0; left:0; right:0; height:3px; background:rgba(7,199,223,0.15); filter:blur(12px); transition:transform 5s cubic-bezier(0.25,0.1,0.75,0.9), opacity 5s cubic-bezier(0.25,0.1,0.75,0.9); transform:scaleX(1); opacity:1;"></div>
+              <div id="rfx-brw-line" style="position:absolute; top:0; left:0; right:0; height:2px; border-radius:1px; background:linear-gradient(to right, rgba(7,199,223,0), rgba(7,199,223,0.6), rgba(7,199,223,0.8), rgba(7,199,223,0.6), rgba(7,199,223,0)); transition:transform 5s cubic-bezier(0.25,0.1,0.75,0.9); transform:scaleX(1);"></div>
+            </div>
+          </div>
+
+          <div style="flex:1;"></div>
+        </div>
+      </div>
+
+      <!-- ═══ DECORATIVE TAB BAR ═══ -->
+      <div class="rfx-tab-bar">
+        <div class="rfx-tab-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 2 18 3-9h4"/></svg>
+          <span>Monitor</span>
+        </div>
+        <div class="rfx-tab-item rfx-active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+          <span>Breathwork</span>
+        </div>
+        <div class="rfx-tab-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+          <span>Coach</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// IIFE — no globals leak into the host page
+(function() {
+  'use strict';
+
+  const root = document.getElementById('rfx-brw');
+  if (!root) return;
+
+  // ═══ Fit phone frame to iframe size ═══
+  // Scales the 375×812 phone container to fit inside the iframe
+  // viewport while preserving aspect ratio. Re-runs on resize.
+  // For "cover" behavior (fill iframe, may clip phone edges) —
+  // change Math.min to Math.max in the line below.
+  const PHONE_W = 375;
+  const PHONE_H = 812;
+  const wrap = root.querySelector('.rfx-phone-container');
+
+  function fitFrame() {
+    if (!wrap) return;
+    const cw = root.clientWidth;
+    const ch = root.clientHeight;
+    if (!cw || !ch) return;
+    const scale = Math.min(cw / PHONE_W, ch / PHONE_H);
+    wrap.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+
+  fitFrame();
+  window.addEventListener('resize', fitFrame);
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(fitFrame).observe(root);
+  }
+  // Re-fit after fonts load — DM Sans can shift layout slightly
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitFrame);
+  }
+
+  // ═══ Breathwork animation ═══
+  // Circle: scale 0.7↔1.0, opacity 0.5↔1.0
+  // Line: scaleX 0.3↔1.0, glow opacity 0↔1
+  function animateBreath() {
+    const circle = root.querySelector('#rfx-brw-circle');
+    const phase = root.querySelector('#rfx-brw-phase');
+    const glow = root.querySelector('#rfx-brw-glow');
+    const line = root.querySelector('#rfx-brw-line');
+    const lineGlow = root.querySelector('#rfx-brw-line-glow');
+    if (!circle) return;
+
+    function setInhale() {
+      if (phase) phase.textContent = 'Breathe In';
+      circle.style.transform = 'scale(1)';
+      circle.style.opacity = '1';
+      if (glow) glow.style.opacity = '1';
+      if (line) line.style.transform = 'scaleX(1)';
+      if (lineGlow) {
+        lineGlow.style.transform = 'scaleX(1)';
+        lineGlow.style.opacity = '1';
+      }
+    }
+    function setExhale() {
+      if (phase) phase.textContent = 'Breathe Out';
+      circle.style.transform = 'scale(0.7)';
+      circle.style.opacity = '0.5';
+      if (glow) glow.style.opacity = '0.3';
+      if (line) line.style.transform = 'scaleX(0.3)';
+      if (lineGlow) {
+        lineGlow.style.transform = 'scaleX(0.3)';
+        lineGlow.style.opacity = '0';
+      }
+    }
+    function cycle() {
+      setInhale();
+      setTimeout(() => {
+        setExhale();
+        setTimeout(cycle, 5000);
+      }, 5000);
+    }
+    cycle();
+  }
+
+  // ═══ Timer countdown + HR fluctuation ═══
+  let breathSeconds = 252;
+  setInterval(() => {
+    if (breathSeconds > 0) {
+      breathSeconds--;
+      const m = Math.floor(breathSeconds / 60);
+      const s = breathSeconds % 60;
+      const el = root.querySelector('#rfx-brw-timer');
+      if (el) el.textContent = m + ':' + String(s).padStart(2, '0');
+    }
+    // Fluctuate HR between 65 and 78
+    const bhr = root.querySelector('#rfx-brw-hr');
+    if (bhr) {
+      const v = parseInt(bhr.textContent, 10) + Math.round((Math.random() - 0.5) * 2);
+      bhr.textContent = Math.max(65, Math.min(78, v));
+    }
+  }, 1000);
+
+  animateBreath();
+})();
+</script>
+
+</body>
+</html>
