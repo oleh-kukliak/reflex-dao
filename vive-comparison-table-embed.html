@@ -1,0 +1,301 @@
+<!--
+  ============================================================
+  REFLEX VIVE — COMPARISON TABLE (Webflow Embed)
+  ============================================================
+  Self-contained. Paste this whole block into a Webflow
+  Embed element. No <head> / <body> needed.
+
+  - Carries its own dark background (white text stays visible
+    on any page background).
+  - Outer spacing controlled by .vive-cmp padding (24px /
+    16px mobile). Set to 0 to sit flush in your container.
+  - Horizontal scroll on mobile with sticky first column +
+    right-edge fade hint (auto-hides at scroll end).
+  - Font: inherits 'Inter' from parent page, else system stack.
+  ============================================================
+-->
+
+<style>
+  /* ---- Design tokens (scoped) ---------------------------- */
+  .vive-cmp {
+    --vc-bg:            #000000;
+    --vc-surface:       #0A1413;
+    --vc-border:        rgba(255, 255, 255, 0.08);
+    --vc-border-strong: rgba(255, 255, 255, 0.16);
+    --vc-text:          #FFFFFF;
+    --vc-text-muted:    rgba(255, 255, 255, 0.62);
+    --vc-text-faint:    rgba(255, 255, 255, 0.36);
+    --vc-accent:        #2CE8A5;        /* Reflex Green */
+    --vc-accent-tint:   rgba(44, 232, 165, 0.06);
+    --vc-accent-tint-strong: rgba(44, 232, 165, 0.12);
+    --vc-radius:        12px;
+    --vc-font:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Self-contained wrapper so white text never lands on a
+       light page background. Set padding to 0 to go flush. */
+    background: var(--vc-bg);
+    color: var(--vc-text);
+    font-family: var(--vc-font);
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+  }
+  .vive-cmp *,
+  .vive-cmp *::before,
+  .vive-cmp *::after { box-sizing: border-box; }
+
+  /* ---- Scroll shell (relative parent for the fade) -------- */
+  .vive-cmp__scroll { position: relative; }
+
+  /* ---- Table wrapper (scroll on mobile) ------------------- */
+  .vive-cmp__table-wrap {
+    position: relative;
+    border: 0.5px solid var(--vc-border);
+    border-radius: var(--vc-radius);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ---- Table --------------------------------------------- */
+  .vive-cmp__table {
+    width: 100%;
+    min-width: 720px;
+    /* separate (not collapse) so the sticky column keeps its
+       bottom borders during horizontal scroll */
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+    color: var(--vc-text);
+  }
+  .vive-cmp__table th,
+  .vive-cmp__table td {
+    padding: 22px 20px;
+    text-align: left;
+    border-bottom: 0.5px solid var(--vc-border);
+    vertical-align: middle;
+  }
+  .vive-cmp__table tbody tr:last-child th,
+  .vive-cmp__table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Header row */
+  .vive-cmp__table thead th {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vc-text-muted);
+    padding-top: 24px;
+    padding-bottom: 18px;
+    border-bottom: 0.5px solid var(--vc-border-strong);
+  }
+  .vive-cmp__table thead th.is-vive {
+    color: var(--vc-accent);
+    font-weight: 600;
+    background: var(--vc-accent-tint-strong);
+  }
+
+  /* Row label column (sticky on mobile scroll) */
+  .vive-cmp__table th.row-label {
+    color: var(--vc-text-muted);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    width: 28%;
+    background: var(--vc-bg);   /* solid bg so scrolling cells pass under it */
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+
+  /* Vive column emphasis */
+  .vive-cmp__table td.is-vive {
+    background: var(--vc-accent-tint);
+    color: var(--vc-text);
+    font-weight: 500;
+  }
+  .vive-cmp__table tbody tr:hover td:not(.row-label) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .vive-cmp__table tbody tr:hover td.is-vive {
+    background: var(--vc-accent-tint-strong);
+  }
+
+  /* Cell content */
+  .vive-cmp .vc-cell-muted { color: var(--vc-text-muted); }
+  .vive-cmp .vc-cell-faint { color: var(--vc-text-faint); }
+  .vive-cmp .vc-tick {
+    color: var(--vc-accent);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vive-cmp .vc-tick svg { width: 16px; height: 16px; flex: none; }
+  .vive-cmp .vc-dash {
+    color: var(--vc-text-faint);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  /* ---- Right-edge scroll fade (mobile affordance) --------- */
+  .vive-cmp__fade {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56px;
+    pointer-events: none;
+    border-radius: 0 var(--vc-radius) var(--vc-radius) 0;
+    background: linear-gradient(to right, transparent, var(--vc-bg));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .vive-cmp__scroll.is-scrollable .vive-cmp__fade { opacity: 1; }
+  .vive-cmp__scroll.is-end .vive-cmp__fade { opacity: 0; }
+
+  /* ---- Responsive ----------------------------------------- */
+  @media (max-width: 720px) {
+    .vive-cmp { padding: 16px; }
+    .vive-cmp__table th,
+    .vive-cmp__table td { padding: 18px 16px; }
+    .vive-cmp__table { font-size: 14px; min-width: 640px; }
+    .vive-cmp__table thead th { font-size: 11px; }
+  }
+
+  /* ---- Focus ring (a11y) ---------------------------------- */
+  .vive-cmp__table-wrap:focus-visible {
+    outline: 2px solid var(--vc-accent);
+    outline-offset: 3px;
+    border-radius: var(--vc-radius);
+  }
+</style>
+
+<!-- ===================== TABLE START ===================== -->
+<div class="vive-cmp">
+  <div class="vive-cmp__scroll">
+
+    <div class="vive-cmp__table-wrap" role="region" tabindex="0"
+         aria-label="Comparison of Reflex Vive with Oura Ring, Whoop, and Apple Watch">
+      <table class="vive-cmp__table">
+        <thead>
+          <tr>
+            <th scope="col" class="row-label" aria-hidden="true"></th>
+            <th scope="col" class="is-vive">Reflex Vive</th>
+            <th scope="col">Oura Ring</th>
+            <th scope="col">Whoop</th>
+            <th scope="col">Apple Watch</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <th scope="row" class="row-label">Form factor</th>
+            <td class="is-vive">Ring</td>
+            <td class="vc-cell-muted">Ring</td>
+            <td class="vc-cell-muted">Wristband</td>
+            <td class="vc-cell-muted">Smartwatch</td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="row-label">Built around</th>
+            <td class="is-vive">Nervous system</td>
+            <td class="vc-cell-muted">Sleep &amp; readiness</td>
+            <td class="vc-cell-muted">Recovery &amp; strain</td>
+            <td class="vc-cell-muted">General fitness</td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="row-label">Continuous VLF&nbsp;HRV</th>
+            <td class="is-vive">
+              <span class="vc-tick">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Yes
+              </span>
+            </td>
+            <td><span class="vc-dash">—</span></td>
+            <td><span class="vc-dash">—</span></td>
+            <td><span class="vc-dash">—</span></td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="row-label">Subscription required</th>
+            <td class="is-vive">
+              <span class="vc-tick">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                None
+              </span>
+            </td>
+            <td class="vc-cell-muted">From $5.99/mo</td>
+            <td class="vc-cell-muted">From $30/mo</td>
+            <td class="vc-cell-muted">None</td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="row-label">You own your data</th>
+            <td class="is-vive">
+              <span class="vc-tick">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Yes
+              </span>
+            </td>
+            <td class="vc-cell-faint">Vendor-controlled</td>
+            <td class="vc-cell-faint">Vendor-controlled</td>
+            <td class="vc-cell-faint">Vendor-controlled</td>
+          </tr>
+
+          <tr>
+            <th scope="row" class="row-label">Open research API</th>
+            <td class="is-vive">
+              <span class="vc-tick">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.5 3.5L13 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Yes
+              </span>
+            </td>
+            <td><span class="vc-dash">—</span></td>
+            <td><span class="vc-dash">—</span></td>
+            <td><span class="vc-dash">—</span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <span class="vive-cmp__fade" aria-hidden="true"></span>
+
+  </div>
+</div>
+<!-- ====================== TABLE END ====================== -->
+
+<script>
+  /* Toggle the right-edge fade based on horizontal scroll state.
+     Runs for every .vive-cmp instance on the page. No deps. */
+  (function () {
+    function setup(scroll) {
+      var wrap = scroll.querySelector('.vive-cmp__table-wrap');
+      if (!wrap) return;
+
+      function update() {
+        var overflow = wrap.scrollWidth - wrap.clientWidth;
+        scroll.classList.toggle('is-scrollable', overflow > 1);
+        scroll.classList.toggle('is-end', wrap.scrollLeft >= overflow - 1);
+      }
+
+      wrap.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    }
+
+    function init() {
+      document.querySelectorAll('.vive-cmp__scroll').forEach(setup);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
