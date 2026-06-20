@@ -1,146 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reflex — Coach Screen</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflex — Coach Screen</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 
-<!-- ═══════════════════════════════════════════════════════
-     REFLEX HEALTH — COACH SCREEN (standalone embed)
-     Copy from <style> through </div> at end into a Webflow Embed block.
-     Note: this screen has no JS animations — pure static layout.
-     ═══════════════════════════════════════════════════════ -->
+  <style>
+    /* Fill the entire iframe / host area */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #050e0f;
+      overflow: hidden;
+    }
 
-<style>
-/* Fill the entire iframe / host area.
-   Background is dark to match phone frame; change to `transparent`
-   if you want the Webflow section background to show through. */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background: #050e0f;
-  overflow: hidden;
-}
+    /* All styles scoped to #rfx-cch */
+    #rfx-cch {
+      --dark: #050E0F;
+      --card: #0C1517;
+      --border-subtle: rgba(255,255,255,0.06);
+      --border-medium: rgba(255,255,255,0.10);
+      --recovery: #2DD4A8;
+      --resilience: #34D399;
+      --nervous: #3B66EE;
+      --circulation: #A78BFA;
+      --cyan: #07C7DF;
+      --blue: #3B66EE;
+      --purple: #A78BFA;
+      --green: #34D399;
+      --text-primary: #E8EDEF;
+      --text-secondary: rgba(232,237,239,0.55);
+      --text-tertiary: rgba(232,237,239,0.35);
 
-/* All styles scoped to #rfx-cch. CSS variables live on the
-   container, not :root, so nothing leaks into the host page. */
-#rfx-cch {
-  --dark: #050E0F;
-  --card: #0C1517;
-  --border-subtle: rgba(255,255,255,0.06);
-  --border-medium: rgba(255,255,255,0.10);
-  --recovery: #2DD4A8;
-  --resilience: #34D399;
-  --nervous: #3B66EE;
-  --circulation: #A78BFA;
-  --cyan: #07C7DF;
-  --blue: #3B66EE;
-  --purple: #A78BFA;
-  --green: #34D399;
-  --text-primary: #E8EDEF;
-  --text-secondary: rgba(232,237,239,0.55);
-  --text-tertiary: rgba(232,237,239,0.35);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      color: var(--text-primary);
+      background: #050e0f;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
 
-  font-family: 'DM Sans', -apple-system, sans-serif;
-  color: var(--text-primary);
-  background: #050e0f;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
+    #rfx-cch *,
+    #rfx-cch *::before,
+    #rfx-cch *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* Scoped reset — only elements inside the container */
-#rfx-cch *,
-#rfx-cch *::before,
-#rfx-cch *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    /* Phone container — centered with scale */
+    #rfx-cch .rfx-phone-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 375px;
+      height: 812px;
+      transform: translate(-50%, -50%);
+      transform-origin: center;
+      will-change: transform;
+    }
 
-/* ── Phone Frame ──
-   Container is absolute-centered at 50/50; JS applies a uniform
-   scale via transform so the phone fits inside the iframe at any
-   size while preserving the 375×812 aspect ratio. */
-#rfx-cch .rfx-phone-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 375px;
-  height: 812px;
-  transform: translate(-50%, -50%);
-  transform-origin: center;
-  will-change: transform;
-}
-#rfx-cch .rfx-phone-frame {
-  width: 375px;
-  height: 812px;
-  border-radius: 50px;
-  background: var(--dark);
-  position: relative;
-  overflow: hidden;
-}
+    /* Phone frame with BLACK outer border (ring) */
+    #rfx-cch .rfx-phone-frame {
+      width: 375px;
+      height: 812px;
+      border-radius: 50px;
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+      /* 🖤 black border: 6px solid black + subtle inner shadow for realism */
+      box-shadow: 
+        0 0 0 6px #000000,
+        0 0 0 8px rgba(0,0,0,0.3),
+        0 30px 80px rgba(0,0,0,0.7);
+    }
 
-/* Dynamic Island */
-#rfx-cch .rfx-phone-frame::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 126px;
-  height: 35px;
-  background: #000;
-  border-radius: 20px;
-  z-index: 100;
-}
+    /* Dynamic Island */
+    #rfx-cch .rfx-phone-frame::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 35px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+    }
 
-/* ── Screen ── */
-#rfx-cch .rfx-screen {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-top: 54px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-#rfx-cch .rfx-screen::-webkit-scrollbar { display: none; }
+    /* Screen content */
+    #rfx-cch .rfx-screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-top: 54px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    #rfx-cch .rfx-screen::-webkit-scrollbar { display: none; }
 
-/* ── Tab Bar (decorative — non-interactive) ── */
-#rfx-cch .rfx-tab-bar {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 82px;
-  display: flex;
-  background: rgba(12,21,23,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border-subtle);
-  z-index: 50;
-  padding-bottom: 22px;
-  pointer-events: none;
-}
-#rfx-cch .rfx-tab-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  color: var(--text-tertiary);
-}
-#rfx-cch .rfx-tab-item.rfx-active { color: var(--cyan); }
-#rfx-cch .rfx-tab-item svg { width: 22px; height: 22px; }
-#rfx-cch .rfx-tab-item span { font-size: 10px; font-weight: 500; }
-</style>
+    /* Tab Bar (decorative) */
+    #rfx-cch .rfx-tab-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 82px;
+      display: flex;
+      background: rgba(12,21,23,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-subtle);
+      z-index: 50;
+      padding-bottom: 22px;
+      pointer-events: none;
+    }
+    #rfx-cch .rfx-tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-tertiary);
+    }
+    #rfx-cch .rfx-tab-item.rfx-active { color: var(--cyan); }
+    #rfx-cch .rfx-tab-item svg { width: 22px; height: 22px; }
+    #rfx-cch .rfx-tab-item span { font-size: 10px; font-weight: 500; }
+  </style>
 </head>
 <body>
-
 <div id="rfx-cch">
   <div class="rfx-phone-container">
     <div class="rfx-phone-frame">
@@ -257,63 +250,50 @@ html, body {
 </div>
 
 <script>
-// IIFE — no globals leak into the host page
-(function() {
-  'use strict';
+  (function() {
+    'use strict';
 
-  const root = document.getElementById('rfx-cch');
-  if (!root) return;
+    const root = document.getElementById('rfx-cch');
+    if (!root) return;
 
-  // ═══ Fit phone frame to iframe size ═══
-  // Scales the 375×812 phone container to fit inside the iframe while
-  // preserving aspect ratio AND reserving space for the box-shadow
-  // extent so the soft drop shadow and outer ring don't clip.
-  //
-  // Margins are derived from the phone-frame box-shadow stack:
-  //   ring layers: 8px solid (each side)
-  //   drop shadow: blur 80px, offset_y 30px (asymmetric — shifts down)
-  //
-  // To shrink margins (= bigger phone) reduce the shadow in CSS first,
-  // then drop these numbers proportionally. For a true "cover" fit
-  // (clip to fill), swap Math.min for Math.max in the scale line.
-  const PHONE_W = 375;
-  const PHONE_H = 812;
-  const MARGIN_X = 10;       // ring (8) + blur (80) + breathing (~2)
-  const MARGIN_TOP = 10;     // ring + blur - offset_y
-  const MARGIN_BOTTOM = 10; // ring + blur + offset_y
-  const wrap = root.querySelector('.rfx-phone-container');
+    const PHONE_W = 375;
+    const PHONE_H = 812;
 
-  function fitFrame() {
-    if (!wrap) return;
-    const cw = root.clientWidth;
-    const ch = root.clientHeight;
-    if (!cw || !ch) return;
+    // Margins account for the black border + shadow
+    // box-shadow: 0 0 0 6px #000, 0 0 0 8px rgba(0,0,0,0.3), 0 30px 80px rgba(0,0,0,0.7)
+    const MARGIN_X = 22;      // 6px (black) + 8px (glow) + 8px breathing
+    const MARGIN_TOP = 22;    // same as X + offset compensation
+    const MARGIN_BOTTOM = 28; // extra space for the heavy bottom shadow (30px offset + blur)
 
-    const availW = Math.max(0, cw - MARGIN_X * 2);
-    const availH = Math.max(0, ch - MARGIN_TOP - MARGIN_BOTTOM);
-    const scale = Math.max(0, Math.min(availW / PHONE_W, availH / PHONE_H));
+    const wrap = root.querySelector('.rfx-phone-container');
 
-    // Centre horizontally; bias vertically upward so the longer
-    // bottom shadow has room to render without clipping.
-    const centerX = cw / 2;
-    const centerY = MARGIN_TOP + availH / 2;
+    function fitFrame() {
+      if (!wrap) return;
+      const cw = root.clientWidth;
+      const ch = root.clientHeight;
+      if (!cw || !ch) return;
 
-    wrap.style.left = centerX + 'px';
-    wrap.style.top = centerY + 'px';
-    wrap.style.transform = `translate(-50%, -50%) scale(${scale})`;
-  }
+      const availW = Math.max(0, cw - MARGIN_X * 2);
+      const availH = Math.max(0, ch - MARGIN_TOP - MARGIN_BOTTOM);
+      const scale = Math.max(0, Math.min(availW / PHONE_W, availH / PHONE_H));
 
-  fitFrame();
-  window.addEventListener('resize', fitFrame);
-  if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(fitFrame).observe(root);
-  }
-  // Re-fit after fonts load — DM Sans can shift layout slightly
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(fitFrame);
-  }
-})();
+      const centerX = cw / 2;
+      const centerY = MARGIN_TOP + availH / 2;
+
+      wrap.style.left = centerX + 'px';
+      wrap.style.top = centerY + 'px';
+      wrap.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    }
+
+    fitFrame();
+    window.addEventListener('resize', fitFrame);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(fitFrame).observe(root);
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(fitFrame);
+    }
+  })();
 </script>
-
 </body>
 </html>
