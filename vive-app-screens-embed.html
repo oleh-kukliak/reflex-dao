@@ -1,0 +1,721 @@
+<!--
+  ============================================================
+  REFLEX VIVE — APP SCREENS + CAPTIONS (Webflow Embed)
+  ============================================================
+  Self-contained. Paste this whole block into a Webflow Embed.
+  - Status bars (time / wifi / signal / battery) removed.
+  - Only the 4 phone screens + their captions remain.
+  - Carries its own dark background. Outer spacing via
+    .vive-app padding (64px desktop / 56px mobile; set 0 to
+    sit flush in your container).
+  - Layout: 4-in-a-row >1180px, 2x2 720-1180px, 1col <720px.
+  - DM Sans loaded via the <link> below; move it to the page
+    <head> if you prefer.
+  ============================================================
+-->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  /* ---- Marketing section tokens -------------------------- */
+  .vive-app {
+    --vc-bg:            #000000;
+    --vc-surface:       #0A1413;
+    --vc-border:        rgba(255, 255, 255, 0.08);
+    --vc-border-strong: rgba(255, 255, 255, 0.16);
+    --vc-text:          #FFFFFF;
+    --vc-text-muted:    rgba(255, 255, 255, 0.62);
+    --vc-text-faint:    rgba(255, 255, 255, 0.36);
+    --vc-accent:        #07C7DF;
+    --vc-font:          'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* ---- Section frame ------------------------------------- */
+  .vive-app {
+    background: var(--vc-bg);
+    color: var(--vc-text);
+    font-family: var(--vc-font);
+    padding: 64px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .vive-app__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  /* ---- Grid: 4-in-a-row at desktop, 2×2 mid, 1col mobile - */
+  .vive-app__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 280px);
+    justify-content: space-between;
+    gap: 64px 24px;
+  }
+  .vive-app__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ====================================================
+     PHONE FRAME + APP-SCREEN TOKENS
+     ==================================================== */
+  .vive-app__phone {
+    --dark: #050E0F;
+    --card: #0C1517;
+    --card-hover: #0F1D20;
+    --elevated: #132A2E;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-medium: rgba(255,255,255,0.10);
+    --recovery: #2DD4A8;
+    --resilience: #34D399;
+    --nervous: #3B66EE;
+    --circulation: #A78BFA;
+    --cyan: #07C7DF;
+    --blue: #3B66EE;
+    --purple: #A78BFA;
+    --green: #34D399;
+    --text-primary: #E8EDEF;
+    --text-secondary: rgba(232,237,239,0.55);
+    --text-tertiary: rgba(232,237,239,0.35);
+
+    position: relative;
+    width: 280px;
+    height: 607px;
+    background: var(--dark);
+    border-radius: 38px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1.5px rgba(255,255,255,0.08),
+      0 0 0 6px rgba(0,0,0,0.5),
+      0 30px 80px -20px rgba(7,199,223,0.18);
+  }
+
+  .vive-app__phone::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 94px;
+    height: 26px;
+    background: #000;
+    border-radius: 15px;
+    z-index: 100;
+  }
+
+  .vive-app__screen-scale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 375px;
+    height: 812px;
+    transform: scale(0.7467);
+    transform-origin: top left;
+    background: var(--dark);
+    color: var(--text-primary);
+  }
+
+  .vive-app__screen-content {
+    position: absolute;
+    top: 54px;
+    left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
+
+  .vive-app__tab-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 82px;
+    display: flex;
+    background: rgba(12,21,23,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-subtle);
+    padding-bottom: 22px;
+    z-index: 50;
+  }
+  .vive-app__tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-tertiary);
+  }
+  .vive-app__tab-item.active { color: var(--cyan); }
+  .vive-app__tab-item svg { width: 22px; height: 22px; }
+  .vive-app__tab-item span { font-size: 10px; font-weight: 500; }
+
+  /* ====================================================
+     ANIMATIONS — all CSS, GPU-friendly (transform/opacity)
+     ==================================================== */
+
+  /* Existing pulse dot (Monitor HR indicator) */
+  @keyframes vc-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+
+  /* HR number pulses with each beat (~73 bpm = 0.82s) */
+  @keyframes vc-hrbeat {
+    0%, 30%, 60%, 100% { transform: scale(1); }
+    15%, 45%           { transform: scale(1.035); }
+  }
+  .vc-hr-beat { animation: vc-hrbeat 0.82s ease-in-out infinite; display: inline-block; transform-origin: left center; }
+
+  /* End-of-line dot halo (Monitor + Nervous System trend lines) */
+  @keyframes vc-dot-halo {
+    0%, 100% { r: 8; opacity: 0.15; }
+    50%      { r: 14; opacity: 0.45; }
+  }
+  .vc-halo { animation: vc-dot-halo 2s ease-in-out infinite; transform-origin: center; }
+
+  /* Population percentile indicator dot halo */
+  @keyframes vc-progress-halo {
+    0%, 100% { box-shadow: 0 0 8px rgba(45,212,168,0.4); transform: scale(1); }
+    50%      { box-shadow: 0 0 18px rgba(45,212,168,0.7); transform: scale(1.08); }
+  }
+  .vc-progress-dot { animation: vc-progress-halo 2.2s ease-in-out infinite; }
+
+  /* Coach AI sparkle twinkle */
+  @keyframes vc-twinkle {
+    0%, 100% { opacity: 1; transform: rotate(0deg) scale(1); }
+    50%      { opacity: 0.55; transform: rotate(180deg) scale(1.15); }
+  }
+  .vc-twinkle { animation: vc-twinkle 3.6s ease-in-out infinite; display: inline-block; transform-origin: center; }
+
+  /* Coach input cursor blink */
+  @keyframes vc-cursor {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  .vc-cursor { animation: vc-cursor 1s steps(1) infinite; }
+
+  /* Breathwork — circle expand/contract (~6s cycle, slow & calm) */
+  @keyframes vc-breath {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    40%, 60% { transform: scale(1.25); opacity: 1; }
+  }
+  .vc-breath-circle { animation: vc-breath 6s ease-in-out infinite; }
+
+  /* Breathwork — glow scales with circle */
+  @keyframes vc-breath-glow {
+    0%, 100% { opacity: 0.6; transform: scale(0.95); }
+    40%, 60% { opacity: 1;   transform: scale(1.15); }
+  }
+  .vc-breath-glow { animation: vc-breath-glow 6s ease-in-out infinite; transform-origin: center; }
+
+  /* Breathwork — bottom line expand/contract */
+  @keyframes vc-breath-line {
+    0%, 100% { transform: scaleX(0.55); opacity: 0.7; }
+    40%, 60% { transform: scaleX(1.15); opacity: 1; }
+  }
+  .vc-breath-line { animation: vc-breath-line 6s ease-in-out infinite; }
+
+  /* ---- Captions ------------------------------------------ */
+  .vive-app__caption {
+    margin-top: 32px;
+    max-width: 280px;
+  }
+  .vive-app__caption-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--vc-accent);
+    margin: 0 0 10px;
+  }
+  .vive-app__caption-title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--vc-text);
+    margin: 0 0 12px;
+    line-height: 1.25;
+  }
+  .vive-app__caption-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--vc-text-muted);
+    margin: 0;
+  }
+
+  /* ---- Responsive ---------------------------------------- */
+  @media (max-width: 1180px) {
+    .vive-app__grid {
+      grid-template-columns: 280px 280px;
+      justify-content: center;
+      column-gap: 100px;
+      row-gap: 80px;
+    }
+  }
+  @media (max-width: 720px) {
+    .vive-app { padding: 56px 20px; }
+    .vive-app__grid {
+      grid-template-columns: 280px;
+      column-gap: 0;
+      row-gap: 72px;
+    }
+  }
+
+  /* ---- Reduced motion ------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    .vc-hr-beat, .vc-halo, .vc-progress-dot, .vc-twinkle,
+    .vc-cursor, .vc-breath-circle, .vc-breath-glow, .vc-breath-line {
+      animation: none !important;
+    }
+  }
+
+  /* ---- Focus ring ---------------------------------------- */
+  .vive-app a:focus-visible {
+    outline: 2px solid var(--vc-accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+</style>
+<section class="vive-app">
+  <div class="vive-app__inner">
+    <div class="vive-app__grid">
+
+      <!-- ════════════════════════════════════════════════════
+           PHONE 1 — MONITOR
+           ════════════════════════════════════════════════════ -->
+      <div class="vive-app__card">
+        <div class="vive-app__phone" role="img" aria-label="Monitor screen with four autonomic pillar scores and a live heart rate of 73 bpm">
+
+          <div class="vive-app__screen-scale">
+            <div class="vive-app__screen-content" style="top:0;padding-top:54px;">
+              <div style="padding:24px 18px 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px;">
+                  <div>
+                    <div style="font-size:30px; font-weight:700; letter-spacing:-0.8px; color:#E8EDEF;">Signals</div>
+                    <div style="font-size:14px; color:rgba(232,237,239,0.55); margin-top:6px;">Choose a pillar to explore trends</div>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px; padding:7px 14px; border-radius:20px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);">
+                    <div style="width:6px; height:6px; border-radius:50%; background:#34D399; box-shadow:0 0 4px rgba(52,211,153,0.53);"></div>
+                    <span style="font-size:12px; font-weight:600; color:#E8EDEF;">Reflex Vive</span>
+                    <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="rgba(232,237,239,0.35)" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </div>
+                </div>
+                <div style="padding:18px; background:#0C1517; border-radius:24px; border:1px solid rgba(7,199,223,0.15); margin-bottom:20px;">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                    <div style="position:relative; width:10px; height:10px;">
+                      <div style="width:10px; height:10px; border-radius:50%; background:rgba(52,211,153,0.3); position:absolute; animation:vc-pulse 2s infinite;"></div>
+                      <div style="width:6px; height:6px; border-radius:50%; background:#34D399; position:absolute; top:2px; left:2px;"></div>
+                    </div>
+                    <span style="font-size:10px; font-weight:600; color:rgba(232,237,239,0.35); letter-spacing:0.8px;">HEART RATE</span>
+                  </div>
+                  <div style="display:flex; align-items:baseline; gap:4px; margin-bottom:14px;">
+                    <span class="vc-hr-beat" data-vc-hr="monitor" style="font-size:48px; font-weight:800; color:white; font-variant-numeric:tabular-nums;">73</span>
+                    <span style="font-size:14px; color:rgba(232,237,239,0.35); padding-bottom:6px;">bpm</span>
+                  </div>
+                  <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                      <span style="font-size:11px; font-weight:600; color:rgba(232,237,239,0.55);">HR Trend</span>
+                      <span style="font-size:9px; font-weight:600; color:#07C7DF; padding:2px 6px; border-radius:5px; background:rgba(7,199,223,0.09);">↑74 / ↓68</span>
+                    </div>
+                    <svg width="100%" height="56" viewBox="0 0 280 56" preserveAspectRatio="none">
+                      <defs><linearGradient id="hrGrad1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#07C7DF" stop-opacity="0.28"/><stop offset="100%" stop-color="#07C7DF" stop-opacity="0"/></linearGradient></defs>
+                      <line x1="8" y1="14" x2="272" y2="14" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="4 5"/>
+                      <line x1="8" y1="28" x2="272" y2="28" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="4 5"/>
+                      <line x1="8" y1="42" x2="272" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="4 5"/>
+                      <path d="M8,32 L28,30 L48,34 L68,28 L88,26 L108,30 L128,24 L148,28 L168,22 L188,26 L208,20 L228,24 L248,18 L268,22 V56 H8 Z" fill="url(#hrGrad1)"/>
+                      <polyline points="8,32 28,30 48,34 68,28 88,26 108,30 128,24 148,28 168,22 188,26 208,20 228,24 248,18 268,22" fill="none" stroke="#07C7DF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle class="vc-halo" cx="268" cy="22" r="8" fill="#07C7DF" opacity="0.15" style="transform-box: fill-box; transform-origin: center;"/>
+                      <circle cx="268" cy="22" r="4" fill="#07C7DF"/>
+                    </svg>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                  <div style="background:#0C1517; border-radius:16px; padding:16px; border:1px solid rgba(45,212,168,0.35); box-shadow:0 0 15px rgba(45,212,168,0.08), inset 0 1px 0 rgba(45,212,168,0.1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <div style="width:36px; height:36px; border-radius:10px; background:rgba(45,212,168,0.12); display:flex; align-items:center; justify-content:center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#2DD4A8"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+                      </div>
+                      <div style="display:flex; align-items:baseline; gap:1px;"><span style="font-size:26px; font-weight:700; color:white; letter-spacing:-1px;">77</span><span style="font-size:12px; color:rgba(232,237,239,0.35);">/100</span></div>
+                    </div>
+                    <div style="font-size:14px; font-weight:600; margin-bottom:1px; color:white;">Sleep</div>
+                    <div style="font-size:11px; color:rgba(232,237,239,0.55);">Recovery + restore</div>
+                  </div>
+                  <div style="background:#0C1517; border-radius:16px; padding:16px; border:1px solid rgba(52,211,153,0.35); box-shadow:0 0 15px rgba(52,211,153,0.08), inset 0 1px 0 rgba(52,211,153,0.1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <div style="width:36px; height:36px; border-radius:10px; background:rgba(52,211,153,0.12); display:flex; align-items:center; justify-content:center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6"/><path d="M2.5 12A9.5 9.5 0 0 1 16 3.5L21.5 8M21.5 12A9.5 9.5 0 0 1 8 20.5L2.5 16"/></svg>
+                      </div>
+                      <div style="display:flex; align-items:baseline; gap:1px;"><span style="font-size:26px; font-weight:700; color:white; letter-spacing:-1px;">72</span><span style="font-size:12px; color:rgba(232,237,239,0.35);">/100</span></div>
+                    </div>
+                    <div style="font-size:14px; font-weight:600; margin-bottom:1px; color:white;">Resilience</div>
+                    <div style="font-size:11px; color:rgba(232,237,239,0.55);">Stress + bounce-back</div>
+                  </div>
+                  <div style="background:#0C1517; border-radius:16px; padding:16px; border:1px solid rgba(59,102,238,0.35); box-shadow:0 0 15px rgba(59,102,238,0.08), inset 0 1px 0 rgba(59,102,238,0.1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <div style="width:36px; height:36px; border-radius:10px; background:rgba(59,102,238,0.12); display:flex; align-items:center; justify-content:center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#3B66EE"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="2" r="1.5"/><circle cx="12" cy="22" r="1.5"/><circle cx="2" cy="12" r="1.5"/><circle cx="22" cy="12" r="1.5"/><circle cx="5.6" cy="5.6" r="1.5"/><circle cx="18.4" cy="18.4" r="1.5"/><circle cx="18.4" cy="5.6" r="1.5"/><circle cx="5.6" cy="18.4" r="1.5"/></svg>
+                      </div>
+                      <div style="display:flex; align-items:baseline; gap:1px;"><span style="font-size:26px; font-weight:700; color:white; letter-spacing:-1px;">65</span><span style="font-size:12px; color:rgba(232,237,239,0.35);">/100</span></div>
+                    </div>
+                    <div style="font-size:14px; font-weight:600; margin-bottom:1px; color:white;">Nervous System</div>
+                    <div style="font-size:11px; color:rgba(232,237,239,0.55);">ANS balance</div>
+                  </div>
+                  <div style="background:#0C1517; border-radius:16px; padding:16px; border:1px solid rgba(167,139,250,0.35); box-shadow:0 0 15px rgba(167,139,250,0.08), inset 0 1px 0 rgba(167,139,250,0.1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <div style="width:36px; height:36px; border-radius:10px; background:rgba(167,139,250,0.12); display:flex; align-items:center; justify-content:center;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#A78BFA"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                      </div>
+                      <div style="display:flex; align-items:baseline; gap:1px;"><span style="font-size:26px; font-weight:700; color:white; letter-spacing:-1px;">81</span><span style="font-size:12px; color:rgba(232,237,239,0.35);">/100</span></div>
+                    </div>
+                    <div style="font-size:14px; font-weight:600; margin-bottom:1px; color:white;">Circulation</div>
+                    <div style="font-size:11px; color:rgba(232,237,239,0.55);">Vascular rhythm</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vive-app__tab-bar">
+            <div class="vive-app__tab-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 2 18 3-9h4"/></svg><span>Monitor</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>Coach</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="10" width="4" height="11" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><rect x="16" y="2" width="4" height="19" rx="1"/></svg><span>Activities</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Me</span></div>
+          </div>
+
+        </div>
+
+        <div class="vive-app__caption">
+          <p class="vive-app__caption-label">Monitor</p>
+          <h3 class="vive-app__caption-title">Four signals, one picture.</h3>
+          <p class="vive-app__caption-body">Sleep, resilience, ANS balance, circulation — your full autonomic snapshot, derived from the same VLF signal a clinical lab would use.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           PHONE 2 — NERVOUS SYSTEM DETAIL
+           ════════════════════════════════════════════════════ -->
+      <div class="vive-app__card">
+        <div class="vive-app__phone" role="img" aria-label="Nervous System detail screen with trend chart, population comparison, and autonomic metrics">
+
+          <div class="vive-app__screen-scale">
+            <div class="vive-app__screen-content" style="top:0;padding-top:54px;">
+              <div style="padding:0 18px; padding-bottom:100px;">
+
+                <div style="display:flex; align-items:center; gap:14px; padding-top:28px; padding-bottom:24px;">
+                  <div style="width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+                  </div>
+                  <div>
+                    <div style="font-size:26px; font-weight:700; color:white;">Nervous System</div>
+                    <div style="font-size:13px; color:rgba(255,255,255,0.55);">Updated 4h ago</div>
+                  </div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.05); border-radius:20px; padding:18px; margin-bottom:20px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <div style="font-size:16px; font-weight:600; color:white;">Nervous System Score</div>
+                    <div style="display:flex; align-items:center; gap:4px;">
+                      <span style="font-size:13px; color:rgba(255,255,255,0.5);">Score</span>
+                      <span style="font-size:13px; font-weight:600; color:white;">66</span>
+                    </div>
+                  </div>
+                  <svg width="100%" height="120" viewBox="0 0 350 120" preserveAspectRatio="none" style="margin-bottom:14px;">
+                    <defs><linearGradient id="nervTrendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3B66EE" stop-opacity="0.25"/><stop offset="100%" stop-color="#3B66EE" stop-opacity="0.02"/></linearGradient></defs>
+                    <path d="M0 90 L50 85 L100 78 L150 70 L200 74 L250 60 L300 45 L350 30 V120 H0 Z" fill="url(#nervTrendFill)"/>
+                    <polyline points="0,90 50,85 100,78 150,70 200,74 250,60 300,45 350,30" fill="none" stroke="#3B66EE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="0" cy="90" r="3.5" fill="#3B66EE"/><circle cx="50" cy="85" r="3.5" fill="#3B66EE"/><circle cx="100" cy="78" r="3.5" fill="#3B66EE"/><circle cx="150" cy="70" r="3.5" fill="#3B66EE"/><circle cx="200" cy="74" r="3.5" fill="#3B66EE"/><circle cx="250" cy="60" r="3.5" fill="#3B66EE"/><circle cx="300" cy="45" r="3.5" fill="#3B66EE"/>
+                    <circle class="vc-halo" cx="350" cy="30" r="8" fill="#3B66EE" opacity="0.18" style="transform-box: fill-box; transform-origin: center;"/>
+                    <circle cx="350" cy="30" r="4.5" fill="#3B66EE"/>
+                  </svg>
+                  <div style="display:flex; gap:7px; justify-content:center;">
+                    <div style="padding:7px 15px; border-radius:20px; background:#07C7DF; color:#050E0F; font-size:13px; font-weight:500;">7D</div>
+                    <div style="padding:7px 15px; border-radius:20px; font-size:13px; font-weight:500; color:white;">14D</div>
+                    <div style="padding:7px 15px; border-radius:20px; font-size:13px; font-weight:500; color:white;">1M</div>
+                    <div style="padding:7px 15px; border-radius:20px; font-size:13px; font-weight:500; color:white;">All</div>
+                  </div>
+                </div>
+
+                <div style="background:#0C1517; border-radius:20px; padding:20px; border:1px solid rgba(255,255,255,0.06); margin-bottom:20px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div style="font-size:18px; font-weight:700; color:white;">Nervous System Score</div>
+                    <div style="font-size:12px; font-weight:600; color:#07C7DF; padding:5px 12px; border-radius:20px; background:rgba(7,199,223,0.08); border:1px solid rgba(7,199,223,0.3);">Top 22%</div>
+                  </div>
+                  <div style="position:relative; height:18px; margin-bottom:24px;">
+                    <div style="position:absolute; top:4px; left:0; right:0; height:10px; border-radius:5px; background:rgba(255,255,255,0.08);"></div>
+                    <div style="position:absolute; top:4px; left:0; width:66%; height:10px; border-radius:5px; background:linear-gradient(to right, #2DD4A8, #3B66EE, #A78BFA);"></div>
+                    <div class="vc-progress-dot" style="position:absolute; top:0; left:calc(66% - 9px); width:18px; height:18px; border-radius:50%; background:#07C7DF; border:3px solid #050E0F;"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between;">
+                    <div style="text-align:center;">
+                      <div style="font-size:12px; color:rgba(232,237,239,0.55); margin-bottom:4px;">Population Avg</div>
+                      <div style="font-size:22px; font-weight:700; color:white;">64</div>
+                    </div>
+                    <div style="text-align:center;">
+                      <div style="font-size:12px; color:rgba(232,237,239,0.55); margin-bottom:4px;">Your Score</div>
+                      <div style="font-size:22px; font-weight:700; color:#07C7DF;">66</div>
+                    </div>
+                    <div style="text-align:center;">
+                      <div style="font-size:12px; color:rgba(232,237,239,0.55); margin-bottom:4px;">Difference</div>
+                      <div style="font-size:22px; font-weight:700; color:#07C7DF;">+2</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:flex-start; gap:14px; padding:18px; background:rgba(255,255,255,0.05); border-radius:16px; border:1px solid rgba(255,255,255,0.08); margin-bottom:16px;">
+                  <div style="width:44px; height:44px; border-radius:12px; background:rgba(59,102,238,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B66EE" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M3 12h18"/><path d="M7.5 7.5l9 9M16.5 7.5l-9 9"/></svg>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:14px; font-weight:600; color:white; margin-bottom:6px;">Balance Index</div>
+                    <div style="display:flex; align-items:baseline; gap:2px; margin-bottom:6px;">
+                      <span style="font-size:28px; font-weight:700; color:#3B66EE;">6.2</span>
+                      <span style="font-size:16px; color:rgba(255,255,255,0.5);">/10</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                      <span style="font-size:14px; color:#5ED6CE;">↗</span>
+                      <span style="font-size:13px; color:rgba(255,255,255,0.7);">Increased by 0.4 from last week</span>
+                    </div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.5);">Parasympathetic/Sympathetic balance</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:flex-start; gap:14px; padding:18px; background:rgba(255,255,255,0.05); border-radius:16px; border:1px solid rgba(255,255,255,0.08); margin-bottom:16px;">
+                  <div style="width:44px; height:44px; border-radius:12px; background:rgba(7,199,223,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#07C7DF" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="12" r="2"/><path d="M10 12h2"/><path d="M14 12h2"/><path d="M18 12h2"/></svg>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:14px; font-weight:600; color:white; margin-bottom:6px;">Reflex Response</div>
+                    <div style="display:flex; align-items:baseline; gap:2px; margin-bottom:6px;">
+                      <span style="font-size:28px; font-weight:700; color:#07C7DF;">7.1</span>
+                      <span style="font-size:16px; color:rgba(255,255,255,0.5);">/10</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
+                      <span style="font-size:14px; color:#5ED6CE;">↗</span>
+                      <span style="font-size:13px; color:rgba(255,255,255,0.7);">Increased by 0.3 from last week</span>
+                    </div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.5);">Respiratory Sinus Arrhythmia quality</div>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:flex-start; gap:14px; padding:18px; background:rgba(255,255,255,0.05); border-radius:16px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="width:44px; height:44px; border-radius:12px; background:rgba(123,147,219,0.12); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7B93DB" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 12l2-3 2 3 2-4 2 4 2-2"/></svg>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:14px; font-weight:600; color:white; margin-bottom:6px;">VLF Power Baseline</div>
+                    <div style="display:flex; align-items:baseline; gap:2px; margin-bottom:6px;">
+                      <span style="font-size:28px; font-weight:700; color:#7B93DB;">842</span>
+                      <span style="font-size:16px; color:rgba(255,255,255,0.5);"> ms²</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="vive-app__tab-bar">
+            <div class="vive-app__tab-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 2 18 3-9h4"/></svg><span>Monitor</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>Coach</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="10" width="4" height="11" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><rect x="16" y="2" width="4" height="19" rx="1"/></svg><span>Activities</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Me</span></div>
+          </div>
+
+        </div>
+
+        <div class="vive-app__caption">
+          <p class="vive-app__caption-label">Drill in</p>
+          <h3 class="vive-app__caption-title">Behind every score, the full data.</h3>
+          <p class="vive-app__caption-body">Tap any pillar and see the trend, your population percentile, and the autonomic metrics behind the number.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           PHONE 3 — COACH
+           ════════════════════════════════════════════════════ -->
+      <div class="vive-app__card">
+        <div class="vive-app__phone" role="img" aria-label="Coach screen with chat exchange between Viva and the user about overnight VLF and sleep">
+
+          <div class="vive-app__screen-scale">
+            <div class="vive-app__screen-content" style="top:0;padding-top:54px;display:flex;flex-direction:column;">
+
+              <div style="padding:24px 20px 22px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:30px; font-weight:700; letter-spacing:-0.8px; color:#E8EDEF;">Coach</div>
+                <div style="display:flex; align-items:center; gap:8px; padding:7px 14px; border-radius:20px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);">
+                  <div style="width:6px; height:6px; border-radius:50%; background:#34D399; box-shadow:0 0 4px rgba(52,211,153,0.53);"></div>
+                  <span style="font-size:12px; font-weight:600; color:#E8EDEF;">Reflex Vive</span>
+                  <svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="rgba(232,237,239,0.35)" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </div>
+              </div>
+
+              <div style="padding:0 20px; flex:1;">
+
+                <div style="padding:16px; background:linear-gradient(135deg, rgba(7,199,223,0.06), rgba(59,102,238,0.06)); border-radius:16px; border:1px solid rgba(7,199,223,0.15); margin-bottom:14px;">
+                  <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                    <div style="width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg, #07C7DF, #3B66EE); display:flex; align-items:center; justify-content:center;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"/></svg>
+                    </div>
+                    <div>
+                      <div style="font-size:14px; font-weight:600; color:#E8EDEF;">Daily Insights</div>
+                      <div style="font-size:11px; color:rgba(232,237,239,0.35);">Monday, February 24</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                    <div style="flex:1; padding:10px 0; text-align:center; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(45,212,168,0.12);">
+                      <div style="font-size:16px; font-weight:700; color:#2DD4A8;">78</div>
+                      <div style="font-size:8px; font-weight:600; color:rgba(232,237,239,0.35); letter-spacing:0.3px; margin-top:4px;">SLEEP</div>
+                    </div>
+                    <div style="flex:1; padding:10px 0; text-align:center; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(52,211,153,0.12);">
+                      <div style="font-size:16px; font-weight:700; color:#34D399;">72</div>
+                      <div style="font-size:8px; font-weight:600; color:rgba(232,237,239,0.35); letter-spacing:0.3px; margin-top:4px;">RESILIENCE</div>
+                    </div>
+                    <div style="flex:1; padding:10px 0; text-align:center; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(59,102,238,0.12);">
+                      <div style="font-size:16px; font-weight:700; color:#3B66EE;">65</div>
+                      <div style="font-size:8px; font-weight:600; color:rgba(232,237,239,0.35); letter-spacing:0.3px; margin-top:4px;">ANS</div>
+                    </div>
+                    <div style="flex:1; padding:10px 0; text-align:center; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(167,139,250,0.12);">
+                      <div style="font-size:16px; font-weight:700; color:#A78BFA;">81</div>
+                      <div style="font-size:8px; font-weight:600; color:rgba(232,237,239,0.35); letter-spacing:0.3px; margin-top:4px;">CIRC</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:14px;">
+                  <div style="width:30px; height:30px; border-radius:10px; background:linear-gradient(135deg, #07C7DF, #A78BFA); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:white;">
+                    <span class="vc-twinkle" style="font-size:12px;">✦</span>
+                  </div>
+                  <div style="font-size:14px; line-height:1.55; padding:12px 16px; max-width:260px; background:rgba(255,255,255,0.04); border-radius:14px; border:1px solid rgba(255,255,255,0.06); color:#E8EDEF;">
+                    Good morning! Your VLF was 842ms² last night. Recovery is 78 and ANS Score is 65. Let's dive into your data.
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-bottom:14px;">
+                  <div style="font-size:14px; line-height:1.55; padding:12px 16px; max-width:260px; background:rgba(0,212,170,0.09); border-radius:14px; border:1px solid rgba(0,212,170,0.2); color:#E8EDEF;">
+                    How was my sleep?
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:14px;">
+                  <div style="width:30px; height:30px; border-radius:10px; background:linear-gradient(135deg, #07C7DF, #A78BFA); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:white;">
+                    <span class="vc-twinkle" style="font-size:12px; animation-delay:1.8s;">✦</span>
+                  </div>
+                  <div style="font-size:14px; line-height:1.55; padding:12px 16px; max-width:260px; background:rgba(255,255,255,0.04); border-radius:14px; border:1px solid rgba(255,255,255,0.06); color:#E8EDEF;">
+                    You slept 7h 24m with 85% efficiency. Deep sleep hit 1h 48m which is solid. Your VLF recovered well overnight — a sign your autonomic system is charging properly.
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:0 20px 16px;">
+                <div style="position:relative; padding:11px 16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.10); border-radius:14px; display:flex; align-items:center; gap:4px;">
+                  <span style="font-size:13px; color:rgba(232,237,239,0.45);">Ask Viva</span>
+                  <span class="vc-cursor" style="display:inline-block; width:2px; height:14px; background:#07C7DF; margin-left:2px;"></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="vive-app__tab-bar">
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 2 18 3-9h4"/></svg><span>Monitor</span></div>
+            <div class="vive-app__tab-item active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>Coach</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="10" width="4" height="11" rx="1"/><rect x="10" y="6" width="4" height="15" rx="1"/><rect x="16" y="2" width="4" height="19" rx="1"/></svg><span>Activities</span></div>
+            <div class="vive-app__tab-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Me</span></div>
+          </div>
+
+        </div>
+
+        <div class="vive-app__caption">
+          <p class="vive-app__caption-label">Coach</p>
+          <h3 class="vive-app__caption-title">Context, not just numbers.</h3>
+          <p class="vive-app__caption-body">Viva reads your data and your week, then explains what's actually happening — in your own signal, not generic advice.</p>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════
+           PHONE 4 — BREATHWORK
+           ════════════════════════════════════════════════════ -->
+      <div class="vive-app__card">
+        <div class="vive-app__phone" role="img" aria-label="Breathwork session screen with animated breathing circle at six breaths per minute">
+
+          <div class="vive-app__screen-scale">
+            <div class="vive-app__screen-content" style="top:0;padding-top:54px;display:flex;flex-direction:column;height:calc(100% - 54px);">
+
+              <div style="display:flex; justify-content:flex-end; padding:20px 20px 0;">
+                <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:22px; color:white; font-weight:300;">×</div>
+              </div>
+
+              <div style="flex:1;"></div>
+
+              <div style="display:flex; align-items:center; justify-content:center; padding-bottom:60px;">
+                <div style="position:relative; display:flex; align-items:center; justify-content:center;">
+                  <div class="vc-breath-glow" style="position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(7,199,223,0.13); filter:blur(30px);"></div>
+                  <div class="vc-breath-circle" style="width:200px; height:200px; border-radius:50%; border:3px solid rgba(7,199,223,0.4); background:radial-gradient(circle, rgba(7,199,223,0.20) 0%, rgba(7,199,223,0.03) 100%); display:flex; align-items:center; justify-content:center;">
+                    <div style="font-size:20px; font-weight:600; color:white;">Breathe</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:center; gap:40px; padding:0 20px;">
+                <div style="text-align:center;">
+                  <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Time Left</div>
+                  <span style="font-size:24px; font-weight:700; color:white; font-family:ui-monospace,SFMono-Regular,monospace;">4:12</span>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Pace</div>
+                  <div style="display:flex; align-items:baseline; justify-content:center; gap:3px;">
+                    <span style="font-size:24px; font-weight:700; color:white;">6.0</span>
+                    <span style="font-size:12px; color:rgba(255,255,255,0.5);">br/m</span>
+                  </div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:11px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Heart Rate</div>
+                  <div style="display:flex; align-items:baseline; justify-content:center; gap:3px;">
+                    <span data-vc-hr="breath" style="font-size:24px; font-weight:700; color:white;">72</span>
+                    <span style="font-size:12px; color:rgba(255,255,255,0.5);">bpm</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="padding:32px 20px 0;">
+                <div style="position:relative; height:3px;">
+                  <div class="vc-breath-line" style="position:absolute; top:0; left:0; right:0; height:3px; background:rgba(7,199,223,0.15); filter:blur(12px);"></div>
+                  <div class="vc-breath-line" style="position:absolute; top:0; left:0; right:0; height:2px; border-radius:1px; background:linear-gradient(to right, rgba(7,199,223,0), rgba(7,199,223,0.6), rgba(7,199,223,0.8), rgba(7,199,223,0.6), rgba(7,199,223,0));"></div>
+                </div>
+              </div>
+
+              <div style="flex:1;"></div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="vive-app__caption">
+          <p class="vive-app__caption-label">Breathwork</p>
+          <h3 class="vive-app__caption-title">Train the system that runs you.</h3>
+          <p class="vive-app__caption-body">Guided breathing at your personal resonance frequency. Measurable shifts in autonomic balance from the first week.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  var monitor = document.querySelector('.vive-app [data-vc-hr="monitor"]');
+  var breath  = document.querySelector('.vive-app [data-vc-hr="breath"]');
+
+  function liveHR(el, base, range, interval) {
+    if (!el) return;
+    var hr = base;
+    setInterval(function () {
+      hr += Math.floor(Math.random() * 3) - 1;          // -1, 0, or +1
+      if (hr < base - range) hr = base - range + 1;
+      if (hr > base + range) hr = base + range - 1;
+      el.textContent = hr;
+    }, interval);
+  }
+
+  // Monitor: resting, base 73, drifts 71–75, every 1.4s
+  liveHR(monitor, 73, 2, 1400);
+  // Breathwork: calming, base 70, drifts 68–72, every 1.8s
+  liveHR(breath, 70, 2, 1800);
+})();
+</script>
