@@ -1,0 +1,202 @@
+/* ============================================================
+   REFLEX VIVE — Scroll-Scrubbed Video Hero (v4, Webflow-safe)
+   All selectors are scoped under .vv-scope / vv- prefix.
+   No global resets, no body/html/* rules — zero impact on
+   the rest of the Webflow page.
+   Spec: vive-parallax-dev-handoff.pdf (all constants preserved)
+   ============================================================ */
+
+/* Geomisans is loaded from the project's Webflow CDN.
+   If the font is already added in Webflow project settings,
+   you can safely delete this @font-face block. */
+@font-face{
+  font-family:'Geomisans';
+  src:url('https://cdn.prod.website-files.com/681a36ffab7a2a9da8621892/681a382ec64b01b7db890b1c_Geomisans.ttf') format('truetype');
+  font-weight:300 700;
+  font-display:swap;
+}
+
+/* ---- Design tokens (scoped, not :root) ---- */
+.vv-scope{
+  --vv-bg:#000000;
+  --vv-ink:#F3F8F6;
+  --vv-muted:#8FA6A2;
+  --vv-faint:#5C6E6B;
+  --vv-green:#2CE8A5;
+  --vv-display:'Geomisans',sans-serif;
+  --vv-body:'Inter',sans-serif;
+}
+
+/* ---- Scoped reset (replaces the original global * reset) ---- */
+.vv-scope, .vv-scope *, .vv-scope *::before, .vv-scope *::after{
+  box-sizing:border-box;
+}
+.vv-scope :where(h1, h2, p, div, a, span){
+  margin:0; padding:0;
+}
+.vv-scope{
+  color:var(--vv-ink);
+  font-family:var(--vv-body);
+  -webkit-font-smoothing:antialiased;
+}
+.vv-scope ::selection{background:rgba(44,232,165,.28);color:#fff}
+
+/* ---- Layout: 640vh section + sticky 100vh stage ---- */
+.vv-hero{position:relative;height:640vh;background:var(--vv-bg)}
+.vv-stage{
+  position:sticky;top:0;height:100vh;width:100%;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+.vv-vidwrap{position:absolute;inset:0;z-index:1;overflow:hidden}
+video.vv-video{
+  position:absolute;left:50%;top:50%;
+  width:118%;height:118%;
+  transform:translate(-50%,-50%);
+  object-fit:cover;
+  will-change:transform;
+}
+/* Emerald radial glows */
+.vv-stage::before{
+  content:"";position:absolute;inset:0;z-index:2;
+  background:
+    radial-gradient(58% 54% at 58% 54%, rgba(44,232,165,.08), transparent 62%),
+    radial-gradient(42% 40% at 58% 60%, rgba(59,255,176,.05), transparent 72%);
+  pointer-events:none;
+}
+/* Legibility scrim + vignette */
+.vv-stage::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.28) 38%, transparent 62%),
+    radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%);
+}
+
+/* ---- Loader ---- */
+.vv-loader{
+  position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;background:var(--vv-bg);
+  transition:opacity .6s ease;
+}
+.vv-loader.vv-hide{opacity:0;pointer-events:none}
+.vv-loader .vv-ring{
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.12);border-top-color:var(--vv-green);
+  animation:vv-spin 1s linear infinite;
+}
+.vv-loader span{font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--vv-faint)}
+@keyframes vv-spin{to{transform:rotate(360deg)}}
+
+/* ---- Text layers ---- */
+.vv-layers{position:absolute;inset:0;z-index:5;pointer-events:none}
+.vv-layer{
+  position:absolute;left:0;right:0;
+  display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+  padding:0 2.5rem;will-change:opacity,transform,filter;
+}
+.vv-layer a{pointer-events:auto}
+
+.vv-eyebrow{
+  font-family:var(--vv-display);font-size:12px;font-weight:600;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--vv-green);margin-bottom:22px;
+  display:flex;align-items:center;gap:12px;
+}
+.vv-eyebrow::before,.vv-eyebrow::after{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--vv-green))}
+.vv-eyebrow::after{background:linear-gradient(90deg,var(--vv-green),transparent)}
+
+/* CTA matched to the site-wide Webflow "button-primary" component */
+.vv-scope .vv-cta{
+  display:inline-block;margin-top:30px;
+  background:var(--vv-green);color:#000;text-decoration:none;
+  font-family:'Segoe UI',sans-serif;font-weight:700;font-size:1rem;line-height:1.4;
+  padding:1rem 2rem;border:1px solid var(--vv-green);border-radius:2rem;
+  white-space:nowrap;cursor:pointer;
+  transition:all 400ms ease;
+}
+.vv-scope .vv-cta:hover{
+  background:transparent;color:var(--vv-green);
+  box-shadow:0 5px 20px 0 rgba(44,232,165,.5);
+}
+
+.vv-scope h1{
+  font-family:var(--vv-display);font-weight:600;line-height:1.2;letter-spacing:-.02em;
+  font-size:clamp(36px,5vw,64px);max-width:13ch;
+}
+.vv-scope h1 .vv-accent{color:var(--vv-green)}
+.vv-sub{
+  margin-top:24px;max-width:40ch;color:var(--vv-muted);
+  font-size:clamp(14px,1.4vw,17px);line-height:1.6;font-weight:400;
+}
+#vv-intro .vv-eyebrow, #vv-intro h1, #vv-intro .vv-sub{
+  text-shadow:0 1px 3px rgba(0,0,0,.85), 0 2px 22px rgba(0,0,0,.7);
+}
+#vv-intro{top:24vh}
+
+.vv-scrollcue{
+  margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:9px;
+  color:var(--vv-faint);font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+}
+.vv-scrollcue .vv-mouse{
+  width:22px;height:34px;border:1.5px solid rgba(255,255,255,.22);border-radius:14px;
+  position:relative;
+}
+.vv-scrollcue .vv-mouse::after{
+  content:"";position:absolute;left:50%;top:7px;width:3px;height:6px;border-radius:2px;
+  background:var(--vv-green);transform:translateX(-50%);animation:vv-wheel 1.6s ease-in-out infinite;
+}
+@keyframes vv-wheel{0%{opacity:0;transform:translate(-50%,0)}30%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translate(-50%,10px)}}
+
+/* Bottom-anchored beats (B, C) */
+.vv-beat{top:auto;bottom:11vh}
+.vv-beat .vv-kicker{
+  font-family:var(--vv-display);font-size:11px;font-weight:600;letter-spacing:.34em;
+  text-transform:uppercase;color:var(--vv-green);margin-bottom:16px;
+}
+.vv-beat h2{
+  font-family:var(--vv-display);font-weight:500;line-height:1.1;letter-spacing:-.01em;
+  font-size:clamp(26px,4.2vw,50px);max-width:18ch;
+}
+.vv-beat p{margin-top:16px;max-width:46ch;color:var(--vv-muted);font-size:clamp(14px,1.4vw,17px);line-height:1.6}
+.vv-beat .vv-kicker,.vv-beat h2,.vv-beat p{
+  text-shadow:0 1px 3px rgba(0,0,0,.85), 0 2px 22px rgba(0,0,0,.7);
+}
+
+/* Final beat (D) */
+#vv-final{top:17vh}
+#vv-final h2{
+  font-family:var(--vv-display);font-weight:600;line-height:1.06;letter-spacing:-.02em;
+  font-size:clamp(30px,5vw,62px);max-width:15ch;
+}
+#vv-final h2 .vv-accent{color:var(--vv-green)}
+#vv-final .vv-sub{max-width:50ch}
+#vv-final .vv-eyebrow,#vv-final h2,#vv-final .vv-sub{
+  text-shadow:0 1px 3px rgba(0,0,0,.85), 0 2px 22px rgba(0,0,0,.7);
+}
+
+/* ---- Fixed progress rail ---- */
+.vv-rail{
+  position:fixed;left:0;top:0;height:2px;background:var(--vv-green);z-index:65;width:0;
+  box-shadow:0 0 12px var(--vv-green);
+  transition:opacity .5s ease;
+}
+.vv-rail.vv-rail-hidden{opacity:0}
+
+/* ---- Mobile <640px ---- */
+@media(max-width:640px){
+  .vv-scope{--vv-nav-offset:130px} /* fixed navbar + announcement bar height — tune here */
+  .vv-layer{padding:0 1.25rem}
+  #vv-intro .vv-eyebrow, #vv-intro h1, #vv-intro .vv-sub,
+  .vv-beat .vv-kicker, .vv-beat h2, .vv-beat p,
+  #vv-final .vv-eyebrow, #vv-final h2, #vv-final .vv-sub{
+    text-shadow:0 1px 2px #000, 0 2px 16px rgba(0,0,0,.92), 0 0 30px rgba(0,0,0,.85);
+  }
+  #vv-intro{top:calc(9vh + var(--vv-nav-offset,0px))}
+  .vv-beat{bottom:12vh}
+  #vv-final{top:calc(11vh + var(--vv-nav-offset,0px))}
+  #vv-intro .vv-sub, .vv-beat p, #vv-final .vv-sub{max-width:30ch}
+  video.vv-video{width:150%;height:132%}
+}
+
+/* ---- Mobile Portrait <=479px: button-primary sizing ---- */
+@media(max-width:479px){
+  .vv-scope .vv-cta{padding:.75rem 1.5rem;font-size:.875rem}
+}
