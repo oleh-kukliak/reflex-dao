@@ -31,10 +31,9 @@
 .vv-scope, .vv-scope *, .vv-scope *::before, .vv-scope *::after{
   box-sizing:border-box;
 }
-.vv-scope h1, .vv-scope h2, .vv-scope p, .vv-scope div, .vv-scope span{
+.vv-scope :where(h1, h2, p, div, a, span){
   margin:0; padding:0;
 }
-.vv-scope a{margin:0}
 .vv-scope{
   color:var(--vv-ink);
   font-family:var(--vv-body);
@@ -178,15 +177,16 @@ video.vv-video{
 
 /* ---- Mobile <640px ---- */
 @media(max-width:640px){
+  .vv-scope{--vv-nav-offset:130px} /* fixed navbar + announcement bar height — tune here */
   .vv-layer{padding:0 1.25rem}
   #vv-intro .vv-eyebrow, #vv-intro h1, #vv-intro .vv-sub,
   .vv-beat .vv-kicker, .vv-beat h2, .vv-beat p,
   #vv-final .vv-eyebrow, #vv-final h2, #vv-final .vv-sub{
     text-shadow:0 1px 2px #000, 0 2px 16px rgba(0,0,0,.92), 0 0 30px rgba(0,0,0,.85);
   }
-  #vv-intro{top:9vh}
+  #vv-intro{top:calc(9vh + var(--vv-nav-offset,0px))}
   .vv-beat{bottom:12vh}
-  #vv-final{top:11vh}
+  #vv-final{top:calc(11vh + var(--vv-nav-offset,0px))}
   #vv-intro .vv-sub, .vv-beat p, #vv-final .vv-sub{max-width:30ch}
   video.vv-video{width:150%;height:132%}
 }
