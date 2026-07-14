@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BEAT Flywheel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Reset so the diagram is not affected by the host page */
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  /* Flow animation for connector lines */
+  @keyframes dashmove { to { stroke-dashoffset: -32; } }
+
+  #beatStage {
+    --acc1: #22d3ee;
+    --acc2: #3b82f6;
+    position: relative;
+    width: min(94vmin, 1000px);
+    aspect-ratio: 1 / 1;
+    container-type: size;
+    border-radius: 26px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 47%, rgba(37,99,235,.16), rgba(11,16,26,0) 46%),
+      radial-gradient(rgba(255,255,255,.03) 1.1px, transparent 1.2px);
+    background-size: auto, 24px 24px;
+    background-color: #05070c;
+    border: 1px solid rgba(120,160,220,.09);
+    box-shadow: inset 0 0 120px rgba(3,6,12,.7);
+    font-family: 'Manrope', sans-serif;
+    color: #eaf1fb;
+    margin: 0 auto;
+  }
+
+  #beatStage .flow {
+    stroke-dasharray: 7 9;
+    animation: dashmove 1.3s linear infinite;
+  }
+  #beatStage .flow:nth-of-type(1) { animation-delay: 0s; }
+  #beatStage .flow:nth-of-type(2) { animation-delay: .06s; }
+  #beatStage .flow:nth-of-type(3) { animation-delay: .12s; }
+  #beatStage .flow:nth-of-type(4) { animation-delay: .18s; }
+  #beatStage .flow:nth-of-type(5) { animation-delay: .24s; }
+  #beatStage .flow:nth-of-type(6) { animation-delay: .3s; }
+  #beatStage .flow:nth-of-type(7) { animation-delay: .36s; }
+  #beatStage .flow:nth-of-type(8) { animation-delay: .42s; }
+</style>
+</head>
+<body>
+
+<div id="beatStage">
+
+  <!-- soft center glow -->
+  <div style="position:absolute;left:50%;top:47.8%;width:62%;height:62%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle, rgba(46,110,235,.22), rgba(34,211,238,.06) 40%, transparent 66%);filter:blur(6px);pointer-events:none;"></div>
+
+  <!-- connectors -->
+  <svg viewBox="0 0 1000 1000" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;border-radius:319px">
+    <defs>
+      <linearGradient id="gCyan" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color:var(--acc1,#22d3ee)"></stop>
+        <stop offset="1" style="stop-color:var(--acc2,#3b82f6)"></stop>
+      </linearGradient>
+      <linearGradient id="gPurple" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8b93f8"></stop>
+        <stop offset="1" stop-color="#c084fc"></stop>
+      </linearGradient>
+      <radialGradient id="coinGrad" cx="0.38" cy="0.3" r="0.8">
+        <stop offset="0" stop-color="#2b3a5c"></stop>
+        <stop offset="1" stop-color="#0b1120"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- outer arcs -->
+    <path class="flow" d="M 608.0 101.2 A 392 392 0 0 1 876.8 370.0" fill="none" stroke="url(#gCyan)" stroke-width="2.6" opacity="0.92" stroke-linecap="round"></path>
+    <path class="flow" d="M 876.8 586.0 A 392 392 0 0 1 608.0 854.8" fill="none" stroke="url(#gCyan)" stroke-width="2.6" opacity="0.92" stroke-linecap="round"></path>
+    <path class="flow" d="M 392.0 854.8 A 392 392 0 0 1 123.2 586.0" fill="none" stroke="url(#gPurple)" stroke-width="2.6" opacity="0.92" stroke-linecap="round"></path>
+    <path class="flow" d="M 123.2 370.0 A 392 392 0 0 1 392.0 101.2" fill="none" stroke="url(#gPurple)" stroke-width="2.6" opacity="0.92" stroke-linecap="round"></path>
+
+    <!-- arc arrowheads -->
+    <path d="M -13 -8 L 0 0 L -13 8" transform="translate(876.8,370.0) rotate(74)" fill="none" stroke="url(#gCyan)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -13 -8 L 0 0 L -13 8" transform="translate(608.0,854.8) rotate(164)" fill="none" stroke="url(#gCyan)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -13 -8 L 0 0 L -13 8" transform="translate(123.2,586.0) rotate(254)" fill="none" stroke="url(#gPurple)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -13 -8 L 0 0 L -13 8" transform="translate(392.0,101.2) rotate(344)" fill="none" stroke="url(#gPurple)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+
+    <!-- inner spokes -->
+    <path class="flow" d="M 500 328 L 500 190" fill="none" stroke="url(#gCyan)" stroke-width="2.2" stroke-linecap="round"></path>
+    <path class="flow" d="M 650 478 L 788 478" fill="none" stroke="url(#gCyan)" stroke-width="2.2" stroke-linecap="round"></path>
+    <path class="flow" d="M 500 628 L 500 766" fill="none" stroke="url(#gPurple)" stroke-width="2.2" stroke-linecap="round"></path>
+    <path class="flow" d="M 350 478 L 212 478" fill="none" stroke="url(#gPurple)" stroke-width="2.2" stroke-linecap="round"></path>
+
+    <!-- spoke arrowheads -->
+    <path d="M -11 -7 L 0 0 L -11 7" transform="translate(500,182) rotate(-90)" fill="none" stroke="url(#gCyan)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -11 -7 L 0 0 L -11 7" transform="translate(796,478) rotate(0)" fill="none" stroke="url(#gCyan)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -11 -7 L 0 0 L -11 7" transform="translate(500,774) rotate(90)" fill="none" stroke="url(#gPurple)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M -11 -7 L 0 0 L -11 7" transform="translate(204,478) rotate(180)" fill="none" stroke="url(#gPurple)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+
+    <!-- $ coins -->
+    <g>
+      <circle cx="500" cy="248" r="26" fill="url(#coinGrad)" stroke="rgba(130,180,255,.5)" stroke-width="1.5"></circle>
+      <text x="500" y="248" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="600" font-size="24" fill="#dbeafe">$</text>
+    </g>
+    <g>
+      <circle cx="732" cy="478" r="26" fill="url(#coinGrad)" stroke="rgba(130,180,255,.5)" stroke-width="1.5"></circle>
+      <text x="732" y="478" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="600" font-size="24" fill="#dbeafe">$</text>
+    </g>
+    <g>
+      <circle cx="500" cy="708" r="26" fill="url(#coinGrad)" stroke="rgba(160,150,255,.5)" stroke-width="1.5"></circle>
+      <text x="500" y="708" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="600" font-size="24" fill="#e5e0fe">$</text>
+    </g>
+    <g>
+      <circle cx="268" cy="478" r="26" fill="url(#coinGrad)" stroke="rgba(160,150,255,.5)" stroke-width="1.5"></circle>
+      <text x="268" y="478" text-anchor="middle" dominant-baseline="central" font-family="Manrope,sans-serif" font-weight="600" font-size="24" fill="#e5e0fe">$</text>
+    </g>
+  </svg>
+
+  <!-- center node rings -->
+  <div style="position:absolute;left:50%;top:47.8%;width:47%;height:47%;transform:translate(-50%,-50%);border-radius:1681px;background:radial-gradient(circle at 38% 30%, rgba(40,60,100,.16), rgba(8,12,20,.04));border:1px solid rgba(120,160,220,.10);box-shadow:inset 0 0 60px rgba(40,90,180,.10);z-index:2;"></div>
+  <div style="position:absolute;left:50%;top:47.8%;width:38.5%;height:38.5%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 38% 30%, rgba(30,45,80,.5), rgba(8,12,20,.5));border:1px solid rgba(120,160,220,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 22px 60px rgba(0,0,0,.5);z-index:2;"></div>
+  <div style="position:absolute;left:50%;top:47.8%;width:29.5%;height:29.5%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 40% 32%, rgba(46,66,110,.7), rgba(9,13,22,.85));border:1px solid rgba(140,180,255,.28);box-shadow:inset 0 2px 6px rgba(255,255,255,.06), 0 0 54px rgba(50,120,240,.30), 0 26px 60px rgba(0,0,0,.6);z-index:2;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 292 293" style="width:46%;height:46%;filter:drop-shadow(0 0 16px rgba(70,150,255,.75));">
+      <defs>
+        <linearGradient id="reflexA" x1="67.9091" y1="-0.912143" x2="67.9091" y2="288.329" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00EDD1"></stop><stop offset="0.1" stop-color="#03E8D2"></stop><stop offset="0.2" stop-color="#0DD9D8"></stop><stop offset="0.4" stop-color="#1DC1E1"></stop><stop offset="0.5" stop-color="#33A0ED"></stop><stop offset="0.7" stop-color="#5471FF"></stop><stop offset="1" stop-color="#2340FF"></stop>
+        </linearGradient>
+        <linearGradient id="reflexB" x1="224.389" y1="-0.912143" x2="224.389" y2="288.329" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00EDD1"></stop><stop offset="0.1" stop-color="#03E8D2"></stop><stop offset="0.2" stop-color="#0DD9D8"></stop><stop offset="0.4" stop-color="#1DC1E1"></stop><stop offset="0.5" stop-color="#33A0ED"></stop><stop offset="0.7" stop-color="#5471FF"></stop><stop offset="1" stop-color="#2340FF"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M120.175 0C111.555 0 104.577 6.9779 104.577 15.5977V178.278C104.577 183.934 100.016 188.494 94.3612 188.494H93.8139C88.1586 188.494 83.5979 183.934 83.5979 178.278V43.3724C83.5979 34.7527 76.62 27.7748 68.0003 27.7748C59.3805 27.7748 52.4026 34.7527 52.4026 43.3724V114.565C52.4026 120.22 47.8419 124.781 42.1866 124.781H41.3657C35.7104 124.781 31.1497 120.22 31.1497 114.565V99.2412C31.1497 90.6214 24.1718 83.6435 15.552 83.6435C6.93229 83.6435 0 90.5758 0 99.2412V193.557C0 202.177 6.9779 209.154 15.5976 209.154C24.2174 209.154 31.1953 202.177 31.1953 193.557V177.731C31.1953 172.076 35.756 167.515 41.4113 167.515H42.2322C47.8875 167.515 52.4482 172.076 52.4482 177.731V250.703C52.4482 259.322 59.4261 266.3 68.0459 266.3C76.6656 266.3 83.6435 259.322 83.6435 250.703V229.906C83.6435 224.25 88.2042 219.69 93.8595 219.69H94.4068C100.062 219.69 104.623 224.25 104.623 229.906V277.2C104.623 285.82 111.601 292.798 120.22 292.798C128.84 292.798 135.818 285.82 135.818 277.2V15.5977C135.818 6.9779 128.84 0 120.22 0H120.175Z" fill="url(#reflexA)"></path>
+      <path d="M276.29 83.6435C267.67 83.6435 260.692 90.6214 260.692 99.2412V136.548C260.692 142.203 256.131 146.764 250.476 146.764C244.821 146.764 240.26 142.203 240.26 136.548V43.0076C240.26 34.3878 233.282 27.4099 224.662 27.4099C216.043 27.4099 209.065 34.3878 209.065 43.0076V95.0909C209.065 100.746 204.504 105.307 198.849 105.307H198.301C192.646 105.307 188.085 100.746 188.085 95.0909V15.5977C188.085 6.9779 181.108 0 172.488 0C163.868 0 156.89 6.9779 156.89 15.5977V277.2C156.89 285.82 163.868 292.798 172.488 292.798C181.108 292.798 188.085 285.82 188.085 277.2V177.686C188.085 172.03 192.646 167.47 198.301 167.47H198.849C204.504 167.47 209.065 172.03 209.065 177.686V251.067C209.065 259.687 216.043 266.665 224.662 266.665C233.282 266.665 240.26 259.687 240.26 251.067V188.13C240.26 182.474 244.821 177.914 250.476 177.914C256.131 177.914 260.692 182.474 260.692 188.13V193.557C260.692 202.177 267.67 209.154 276.29 209.154C284.909 209.154 291.887 202.177 291.887 193.557V99.2412C291.887 90.6214 284.909 83.6435 276.29 83.6435Z" fill="url(#reflexB)"></path>
+    </svg>
+  </div>
+
+  <!-- USERS node -->
+  <div style="position:absolute;left:50%;top:12%;width:10.6%;height:10.6%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 25%, rgba(52,74,120,.55), rgba(10,14,22,.78));border:1px solid rgba(120,170,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.55), 0 0 26px rgba(56,140,255,.16);z-index:2;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(206,228,255,.92)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:46%;height:46%;">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+  </div>
+
+  <!-- PRODUCTS / SERVICES node -->
+  <div style="position:absolute;left:14.2%;top:47.8%;width:10.6%;height:10.6%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 25%, rgba(60,60,110,.55), rgba(10,14,22,.78));border:1px solid rgba(150,140,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.55), 0 0 26px rgba(120,90,255,.16);z-index:2;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(220,214,255,.92)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:44%;height:44%;">
+      <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"></path><path d="m8.5 8.5 7 7"></path>
+    </svg>
+    <div style="position:absolute;top:6%;right:8%;padding:0.35cqw 0.9cqw;border-radius:1cqw;background:rgba(12,18,30,.85);border:1px solid rgba(150,170,230,.4);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.05cqw;letter-spacing:.05em;color:#cdd7ef;">IP</div>
+  </div>
+
+  <!-- DATA node -->
+  <div style="position:absolute;left:85.8%;top:47.8%;width:10.6%;height:10.6%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 25%, rgba(52,74,120,.55), rgba(10,14,22,.78));border:1px solid rgba(120,170,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.55), 0 0 26px rgba(56,140,255,.16);z-index:2;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(206,228,255,.92)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:44%;height:44%;">
+      <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+    </svg>
+    <div style="position:absolute;top:6%;right:8%;padding:0.35cqw 0.9cqw;border-radius:1cqw;background:rgba(12,18,30,.85);border:1px solid rgba(150,170,230,.4);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.05cqw;letter-spacing:.05em;color:#cdd7ef;">IP</div>
+  </div>
+
+  <!-- RESEARCH / INNOVATION node -->
+  <div style="position:absolute;left:50%;top:83.6%;width:10.6%;height:10.6%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 25%, rgba(56,66,120,.55), rgba(10,14,22,.78));border:1px solid rgba(135,155,255,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 10px 30px rgba(0,0,0,.55), 0 0 26px rgba(90,120,255,.16);z-index:2;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="rgba(214,224,255,.92)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:44%;height:44%;">
+      <path d="M6 18h8"></path><path d="M3 22h18"></path><path d="M14 22a7 7 0 1 0 0-14h-1"></path><path d="M9 14h2"></path><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"></path><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"></path>
+    </svg>
+    <div style="position:absolute;top:6%;right:8%;padding:0.35cqw 0.9cqw;border-radius:1cqw;background:rgba(12,18,30,.85);border:1px solid rgba(150,170,230,.4);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.05cqw;letter-spacing:.05em;color:#cdd7ef;">IP</div>
+  </div>
+
+  <!-- node captions -->
+  <div style="position:absolute;left:50%;top:19.2%;transform:translate(-50%,5px);font-size:1.5cqw;letter-spacing:.14em;font-weight:500;color:rgba(198,214,236,.74);white-space:nowrap;z-index:3">USERS</div>
+  <div style="position:absolute;left:14.2%;top:55.3%;transform:translate(-48%,-14px);font-size:1.5cqw;letter-spacing:.14em;font-weight:500;color:rgba(198,214,236,.74);text-align:center;line-height:1.35;z-index:3">PRODUCTS /<br>SERVICES</div>
+  <div style="position:absolute;left:85.8%;top:55.3%;transform:translate(-50%,-6px);font-size:1.5cqw;letter-spacing:.14em;font-weight:500;color:rgba(198,214,236,.74);white-space:nowrap;z-index:3">DATA</div>
+  <div style="position:absolute;left:50%;top:90.8%;transform:translate(-50%,0);font-size:1.5cqw;letter-spacing:.14em;font-weight:500;color:rgba(198,214,236,.74);text-align:center;line-height:1.35;z-index:3;">RESEARCH /<br>INNOVATION</div>
+
+  <!-- BEAT spoke label -->
+  <div style="position:absolute;left:38.5%;top:44.2%;transform:translate(-392%,0px);font-size:1.55cqw;font-weight:700;letter-spacing:.16em;color:#e8f2ff;text-shadow:0 0 12px rgba(80,150,255,.55);z-index:3;">BEAT</div>
+
+  <!-- corner labels -->
+  <div style="position:absolute;left:2.5%;top:6%;width:22.5%;text-align:left;z-index:3;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.35cqw;letter-spacing:.01em;color:#eaf1fb;line-height:1.05;">EARN BEAT FOR</div>
+    <div style="margin-top:.6cqw;font-size:1.28cqw;line-height:1.5;color:rgba(170,188,214,.62);">Validated data, tasks & challenges, plus optional context inputs</div>
+  </div>
+
+  <div style="position:absolute;right:2.5%;top:6%;width:22.5%;text-align:right;z-index:3;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.35cqw;letter-spacing:.01em;color:#eaf1fb;line-height:1.05;">USERS CONTRIBUTE</div>
+    <div style="margin-top:.6cqw;font-size:1.28cqw;line-height:1.5;color:rgba(170,188,214,.62);">Wearable recordings, guided tasks & optional context inputs with validation built in</div>
+  </div>
+
+  <div style="position:absolute;left:2.5%;bottom:6%;width:22.5%;text-align:left;z-index:3;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.35cqw;letter-spacing:.01em;color:#eaf1fb;line-height:1.05;">REDEEM BEAT FOR</div>
+    <div style="margin-top:.6cqw;font-size:1.28cqw;line-height:1.5;color:rgba(170,188,214,.62);">Premium insights, reports, guided programs & challenge boosts</div>
+  </div>
+
+  <div style="position:absolute;right:2.5%;bottom:6%;width:22.5%;text-align:right;z-index:3;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.35cqw;letter-spacing:.01em;color:#eaf1fb;line-height:1.05;">VALIDATED DATA POWERS</div>
+    <div style="margin-top:.6cqw;font-size:1.28cqw;line-height:1.5;color:rgba(170,188,214,.62);">Biomarkers, models & actionable personalized insights</div>
+  </div>
+
+</div>
+
+</body>
+</html>
