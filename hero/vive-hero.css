@@ -48,6 +48,12 @@
   overflow:hidden;display:flex;align-items:center;justify-content:center;
 }
 .vv-vidwrap{position:absolute;inset:0;z-index:1;overflow:hidden}
+/* Fades video edges into the page bg when the video is scaled below
+   full-bleed (shrunk beats). Opacity is driven from JS. */
+.vv-edgefade{
+  position:absolute;inset:-2px;z-index:2;pointer-events:none;opacity:0;
+  box-shadow:inset 0 0 22vmin 10vmin #000;
+}
 video.vv-video{
   position:absolute;left:50%;top:50%;
   width:118%;height:118%;
