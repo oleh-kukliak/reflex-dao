@@ -15,10 +15,17 @@
   // Set to false to keep the demo behavior (rail stays full-width).
   var RAIL_FADE_OUT = true;
 
+  // Video size multiplier per beat. Beats A/B/D render at SHRINK scale,
+  // Beat C (3rd illustration, internals) smoothly returns to full-bleed
+  // using the same 0.60-0.80 band as its text layer.
+  var SHRINK_DESKTOP = 0.80; // -20% per client request
+  var SHRINK_MOBILE  = 0.72; // tuned for small screens — adjust here
+
   var hero   = document.getElementById('vv-hero');
   var rail   = document.getElementById('vv-rail');
   var vid    = document.getElementById('vv-video');
   var loader = document.getElementById('vv-loader');
+  var edge   = document.getElementById('vv-edgefade');
   if (!hero || !rail || !vid || !loader) return; // fail silently if markup is missing
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -55,8 +62,23 @@
     var driftY = reduce ? 0 : (p - 0.5) * -9;
     var scale  = reduce ? 1 : 1.06 - smooth(0, 1, p) * 0.05;
     var biasX  = (mobile || reduce) ? 0 : (1 - smooth(0.0, 0.5, p)) * 6;
+
+    // Shrink multiplier: SHRINK on beats A/B/D, eases to 1.0 during Beat C
+    var shrinkBase = mobile ? SHRINK_MOBILE : SHRINK_DESKTOP;
+    var m = reduce ? shrinkBase : shrinkBase + (1 - shrinkBase) * band(p, 0.60, 0.67, 0.74, 0.80);
+    scale *= m;
+
     vid.style.transform =
       'translate(calc(-50% + ' + biasX.toFixed(2) + '%), calc(-50% + ' + driftY.toFixed(2) + '%)) scale(' + scale.toFixed(3) + ')';
+
+    // Edge fade: kicks in only when the scaled video no longer covers
+    // the viewport (base size: 118% desktop, 132% limiting side mobile)
+    if (edge) {
+      var coverBase = mobile ? 1.32 : 1.18;
+      var cover = coverBase * scale;
+      var fade = clamp((1.02 - cover) / 0.12, 0, 1);
+      edge.style.opacity = fade.toFixed(3);
+    }
   }
 
   // ---- Scrub engine: scroll progress -> video time ----
