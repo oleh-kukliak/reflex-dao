@@ -18,7 +18,7 @@
   // Video size multiplier per beat. Beats A/B/D render at SHRINK scale,
   // Beat C (3rd illustration, internals) smoothly returns to full-bleed
   // using the same 0.60-0.80 band as its text layer.
-  var SHRINK_DESKTOP = 0.80; // -20% per client request
+  var SHRINK_DESKTOP = 1.0;  // full-bleed on desktop (shrink reverted)
   var SHRINK_MOBILE  = 0.72; // tuned for small screens — adjust here
 
   var hero   = document.getElementById('vv-hero');
